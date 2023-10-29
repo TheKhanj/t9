@@ -19508,8 +19508,7 @@ shakes
 dram
 mckinney
 impartial
-he100  151k  100  151k    0     0   155k      0 --:--:-- --:--:-- --:--:--  155k
-rshey
+hershey
 embryos
 punctuation
 initials
