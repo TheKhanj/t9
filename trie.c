@@ -1,8 +1,10 @@
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "error.h"
 #include "llist.h"
 #include "node.h"
 #include "trie.h"
@@ -148,37 +150,28 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 }
 
 static int get_key(char letter) {
-	switch (letter) {
-	case 'a':
-	case 'b':
-	case 'c':
-		return 0;
-	case 'd':
-	case 'e':
-	case 'f':
-		return 1;
-	case 'g':
-	case 'h':
-	case 'i':
-		return 2;
-	case 'j':
-	case 'k':
-	case 'l':
-		return 3;
-	case 'm':
-	case 'n':
-	case 'o':
-		return 4;
-	case 'p':
-	case 'q':
-	case 'r':
-	case 's':
-		return 5;
-	case 't':
-	case 'u':
-	case 'v':
-		return 6;
-	default:
-		return 7;
+	char *map[] = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+	size_t size = sizeof(map) / sizeof(map[0]);
+
+	for (int i = 0; i < size; i++) {
+		char *key = map[i];
+		for (size_t j = 0; j < strlen(key); j++) {
+			char c = key[j];
+			if (c == letter) {
+				return i;
+			}
+		}
 	}
+
+	error_t err;
+	error_init(&err);
+
+	err.message = malloc(sizeof(char) * 100);
+	sprintf(err.message, "invalid character code in dictionary file (%d)",
+					letter);
+
+	error_panic(&err);
+
+	return -1;
 }
