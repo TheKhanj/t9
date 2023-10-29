@@ -6,7 +6,7 @@
 # Compiles all files of t9
 
 t9: t9.o Node.o
-	gcc -Wall -std=c99 -g -o t9 t9.o Node.o
+	gcc -Wall -std=c99 -g -o t9 t9.o Node.o -lncurses
 
 t9.o: Node.h t9.c
 	gcc -Wall -std=c99 -g -c t9.c

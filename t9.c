@@ -1,19 +1,12 @@
-// William Thing
-// CSE374 Homework 5
-// t9.c
-//
-// This t9 program takes in a file of words
-// that creates differen paths in a Trie for
-// given words. It has the function to search
-// the Trie with t9 number keys to find
-// specific words.
-
 #include "Node.h"
 #include <assert.h>
 #include <ctype.h>
+#include <curses.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>   
 
 #define MAX_LINE 100 // maximum character for a single line
 
@@ -199,10 +192,23 @@ void get_word(char *input, Node *current, char *ret) {
 //	      will immediately exit.
 //	      Valid User input is 2-9 integer keys and '#' option.
 void search(Node *root) {
+	cbreak();
+	echo();
+	initscr();
 	char input[MAX_LINE], ret[MAX_LINE];
+	int pos = 0;
 
-	while (fgets(input, MAX_LINE, stdin)) {
-		get_word(input, root, ret);
-		printf("%s\n", ret);
+	while (true) {
+		char x = getch();
+		input[pos] = x;
+		input[pos + 1] = 0;
+
+		if (x ==EOF) {
+			pos = 0;
+		} else {
+			get_word(input, root, ret);
+			pos++;
+		}
+		refresh();
 	}
 }
