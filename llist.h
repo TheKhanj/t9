@@ -7,7 +7,8 @@ typedef struct llist_t {
 } llist_t;
 
 llist_t *llist_new();
-void llist_free(llist_t *list);
+void llist_deinit(llist_t *list);
 void llist_init(llist_t *list, char *word);
+llist_t *llist_tail(llist_t *list);
 
 #endif // LLIST_H

@@ -15,7 +15,14 @@ void node_init(node_t *node) {
 	for (int i = 0; i < 8; i++) {
 		node->number_key[i] = NULL;
 	}
-	node->front = NULL;
+
+	node->words = NULL;
+}
+
+void node_deinit(node_t *node) {
+	if (node->words) {
+		llist_deinit(node->words);
+	}
 }
 
 void node_iterate(node_t *node, node_t **nodes, size_t size) {
@@ -26,4 +33,17 @@ void node_iterate(node_t *node, node_t **nodes, size_t size) {
 			node_iterate(node->number_key[i], nodes, size);
 		}
 	}
+}
+
+void node_push_word(node_t *node, char *word) {
+	if (node->words == NULL) {
+		node->words = llist_new();
+		llist_init(node->words, word);
+		return;
+	}
+
+	llist_t *tail = llist_tail(node->words);
+
+	tail->next = llist_new();
+	llist_init(tail->next, word);
 }

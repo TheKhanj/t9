@@ -20,9 +20,7 @@ void trie_deinit(trie_t *trie) {
 
 	for (size_t i = 0; i < trie->size; i++) {
 		node_t *node = nodes[i];
-		if (node->front) {
-			llist_free(node->front);
-		}
+		node_deinit(node);
 
 		bool is_root = i == 0;
 
@@ -32,58 +30,54 @@ void trie_deinit(trie_t *trie) {
 	}
 }
 
+static node_t *fetch_next_node(trie_t *trie, node_t *node, size_t key) {
+	if (node->number_key[key] != NULL) {
+		return node->number_key[key];
+	}
+
+	node_t *new_node = node_new();
+	trie->size++;
+	node_init(new_node);
+
+	node->number_key[key] = new_node;
+
+	return new_node;
+}
+
 void trie_add_word(trie_t *trie, char *word) {
-	llist_t *temp;
-	node_t *head = &trie->root;
+	node_t *node = &trie->root;
 
 	for (int i = 0; i < strlen(word) - 1; i++) {
 		int key = get_key(word[i]);
-		if (head->number_key[key] != NULL) {
-			head = head->number_key[key];
-		} else {
-			node_t *node = node_new();
-			node_init(node);
+		node = fetch_next_node(trie, node, key);
 
-			head->number_key[key] = node;
-			trie->size++;
-			head = node;
-		}
+		bool is_leaf = i == (strlen(word) - 2);
 
-		if (i != strlen(word) - 2) {
+		if (!is_leaf) {
 			continue;
 		}
 
-		if (head->front == NULL) {
-			head->front = llist_new();
-			llist_init(head->front, word);
-		} else {
-			temp = head->front;
-			while (temp->next != NULL)
-				temp = temp->next;
-
-			temp->next = llist_new();
-			llist_init(temp->next, word);
-		}
+		node_push_word(node, word);
 	}
 }
 
 void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
-	llist_t *listPointer = NULL;
+	llist_t *list_pointer = NULL;
 	int pound = 0;
 	int done = 0;
 	node_t *current = &trie->root;
 
 	if (input[0] == 'n') {
 		done = 1;
-		if (listPointer != NULL && listPointer->next != NULL) {
-			listPointer = listPointer->next;
-			strcpy(ret, listPointer->word);
+		if (list_pointer != NULL && list_pointer->next != NULL) {
+			list_pointer = list_pointer->next;
+			strcpy(ret, list_pointer->word);
 		} else {
 			err->message = "there are no more synonyms";
 			return;
 		}
 	} else {
-		listPointer = current->front;
+		list_pointer = current->words;
 		for (int i = 0; i < strlen(input) - 1; i++) {
 			if (current != NULL) {
 				switch (input[i]) {
@@ -113,7 +107,7 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 					break;
 				case ' ':
 					if (pound == 0) {
-						listPointer = current->front;
+						list_pointer = current->words;
 					}
 					pound++;
 					break;
@@ -130,16 +124,16 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 			}
 		}
 	}
-	if (current != NULL && current->front != NULL && pound == 0) {
-		listPointer = current->front;
-		strcpy(ret, current->front->word);
+	if (current != NULL && current->words != NULL && pound == 0) {
+		list_pointer = current->words;
+		strcpy(ret, current->words->word);
 	} else if (pound > 0) {
-		while (listPointer != NULL && listPointer->next != NULL && pound > 0) {
-			listPointer = listPointer->next;
+		while (list_pointer != NULL && list_pointer->next != NULL && pound > 0) {
+			list_pointer = list_pointer->next;
 			pound--;
 		}
 		if (pound == 0) {
-			printf("%s\n", listPointer->word);
+			printf("%s\n", list_pointer->word);
 		} else {
 			if (done == 0) {
 				done = 1;

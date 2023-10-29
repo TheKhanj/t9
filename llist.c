@@ -1,4 +1,4 @@
-#include<stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "llist.h"
@@ -17,9 +17,9 @@ void llist_init(llist_t *list, char *word) {
 	list->next = NULL;
 }
 
-void llist_free(llist_t *list) {
+void llist_deinit(llist_t *list) {
 	if (list->next) {
-		llist_free(list->next);
+		llist_deinit(list->next);
 	}
 
 	if (list->word) {
@@ -27,4 +27,12 @@ void llist_free(llist_t *list) {
 	}
 
 	free(list);
+}
+
+llist_t *llist_tail(llist_t *list) {
+	while (list->next != NULL) {
+		list = list->next;
+	}
+
+	return list;
 }
