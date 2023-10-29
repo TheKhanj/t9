@@ -1,12 +1,13 @@
-#include "Node.h"
 #include <assert.h>
 #include <ctype.h>
 #include <curses.h>
+#include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ncurses.h>   
+
+#include "node.h"
 
 #define MAX_LINE 100 // maximum character for a single line
 
@@ -203,7 +204,7 @@ void search(Node *root) {
 		input[pos] = x;
 		input[pos + 1] = 0;
 
-		if (x ==EOF) {
+		if (x == EOF) {
 			pos = 0;
 		} else {
 			get_word(input, root, ret);
