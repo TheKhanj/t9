@@ -9,34 +9,32 @@
 
 #include "node.h"
 
-#define MAX_LINE 100 // maximum character for a single line
+#define MAX_LINE 100
 
-void buildTrie(Node *head, char *word);
-int getKey(char letter);
-void search(Node *root);
+void build_trie(node_t *head, char *word);
+int get_key(char letter);
+void search(node_t *root);
 
 int main(int argc, char **argv) {
 	FILE *dict = fopen(argv[1], "r");
 	char word[MAX_LINE];
-	Node *root = newNode(); // pointer to main root of Trie
-	Node *temp;
+	node_t *root = new_node();
+	node_t *temp;
 	if (dict == NULL) {
 		fprintf(stderr, "File does not exist\n");
 		return 1;
 	}
 	while (fgets(word, MAX_LINE, dict) != NULL) {
 		temp = root;
-		buildTrie(temp, word);
+		build_trie(temp, word);
 	}
 	fclose(dict);
 	search(root);
-	freeEverything(root);
+	free_all(root);
 	return 0;
 }
 
-// post: takes in a letter and returns the corresponding
-// 	 t9 key.
-int getKey(char letter) {
+int get_key(char letter) {
 	switch (letter) {
 	case 'a':
 	case 'b':
@@ -72,40 +70,34 @@ int getKey(char letter) {
 	}
 }
 
-//	post: Takes in dictionary word and top of Trie.
-// 	      Builds the Trie from top to bottom pathed
-//            by the given word. Given word is saved to the last
-//	      path of the key Node for each word. Multiple
-//	      words can be stored in the same Node.
-void buildTrie(Node *head, char *word) {
-	LinkedList *temp;
+void build_trie(node_t *head, char *word) {
+	linked_list_t *temp;
 	for (int i = 0; i < strlen(word) - 1; i++) {
-		int key = getKey(word[i]);
-		if (head->numberKey[key] != NULL) {
-			head = head->numberKey[key];
+		int key = get_key(word[i]);
+		if (head->number_key[key] != NULL) {
+			head = head->number_key[key];
 		} else {
-			head->numberKey[key] = newNode();
-			head = head->numberKey[key];
+			head->number_key[key] = new_node();
+			head = head->number_key[key];
 		}
 		if (i == strlen(word) - 2) {
 			if (head->front == NULL) {
-				head->front = linkedList(word);
+				head->front = linked_list(word);
 			} else {
 				temp = head->front;
 				while (temp->next != NULL) {
 					temp = temp->next;
 				}
-				temp->next = linkedList(word);
+				temp->next = linked_list(word);
 			}
 		}
 	}
 }
 
-void get_word(char *input, Node *current, char *ret) {
-	LinkedList *listPointer = NULL;
+void get_word(char *input, node_t *current, char *ret) {
+	linked_list_t *listPointer = NULL;
 	int pound = 0;
 	int done = 0;
-	// Exit the program if User inputs 'exit'
 
 	if (input[0] == 'n') {
 		done = 1;
@@ -122,28 +114,28 @@ void get_word(char *input, Node *current, char *ret) {
 			if (current != NULL) {
 				switch (input[i]) {
 				case 'i':
-					current = current->numberKey[0];
+					current = current->number_key[0];
 					break;
 				case 'o':
-					current = current->numberKey[1];
+					current = current->number_key[1];
 					break;
 				case 'j':
-					current = current->numberKey[2];
+					current = current->number_key[2];
 					break;
 				case 'k':
-					current = current->numberKey[3];
+					current = current->number_key[3];
 					break;
 				case 'l':
-					current = current->numberKey[4];
+					current = current->number_key[4];
 					break;
 				case 'm':
-					current = current->numberKey[5];
+					current = current->number_key[5];
 					break;
 				case ',':
-					current = current->numberKey[6];
+					current = current->number_key[6];
 					break;
 				case '.':
-					current = current->numberKey[7];
+					current = current->number_key[7];
 					break;
 				case ' ':
 					if (pound == 0) {
@@ -166,7 +158,7 @@ void get_word(char *input, Node *current, char *ret) {
 	if (current != NULL && current->front != NULL && pound == 0) {
 		listPointer = current->front;
 		strcpy(ret, current->front->word);
-	} else if (pound > 0) { // User input of #(s)
+	} else if (pound > 0) {
 		while (listPointer != NULL && listPointer->next != NULL && pound > 0) {
 			listPointer = listPointer->next;
 			pound--;
@@ -186,13 +178,7 @@ void get_word(char *input, Node *current, char *ret) {
 	}
 }
 
-//	post: Takes given Trie and searches for the word associated
-//	      with the User's input. If '#' is entered then it
-//     	      will search for other appropiate options for the same
-//	      t9 key entry. If exit is entered by the User, the program
-//	      will immediately exit.
-//	      Valid User input is 2-9 integer keys and '#' option.
-void search(Node *root) {
+void search(node_t *root) {
 	cbreak();
 	echo();
 	initscr();

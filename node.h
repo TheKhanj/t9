@@ -1,29 +1,20 @@
-// William Thing
-// CSE374 Hw5
-// Node.h
-// Header file for structs used to build Trie
-// for t9 program.
-
 #ifndef NODE_H
 #define NODE_H
 
-struct NodeT* newNode();
-struct wordLink* emptyList(); 
-struct wordLink* linkedList(char* word); 
+struct node_t *new_node();
+struct linked_list_t *empty_list();
+struct linked_list_t *linked_list(char *word);
 
-struct NodeT {
-	struct NodeT* numberKey[8];
-	struct wordLink* front;
-};
+typedef struct node_t {
+	struct node_t *number_key[8];
+	struct linked_list_t *front;
+} node_t;
 
-struct wordLink {
-	char* word;
-	struct wordLink* next;
-};
+typedef struct linked_list_t {
+	char *word;
+	struct linked_list_t *next;
+} linked_list_t;
 
-typedef struct NodeT Node;
-typedef struct wordLink LinkedList;
-
-void freeEverything(Node* root);
-void freeLink(LinkedList* front);
+void free_all(node_t *root);
+void free_linked_list(linked_list_t *front);
 #endif

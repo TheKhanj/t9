@@ -4,24 +4,26 @@
 
 #include "node.h"
 
-struct NodeT *newNode() {
-	struct NodeT *trie = (struct NodeT *)malloc(sizeof(struct NodeT));
+struct node_t *new_node() {
+	struct node_t *trie = (node_t *)malloc(sizeof(node_t));
 	for (int i = 0; i < 8; i++) {
-		trie->numberKey[i] = NULL;
+		trie->number_key[i] = NULL;
 	}
 	trie->front = NULL;
 	return trie;
 }
 
-struct wordLink *emptyList() {
-	struct wordLink *list = (struct wordLink *)malloc(sizeof(struct wordLink));
+struct linked_list_t *empty_list() {
+	struct linked_list_t *list =
+			(struct linked_list_t *)malloc(sizeof(linked_list_t));
 	list->word = NULL;
 	list->next = NULL;
 	return list;
 }
 
-struct wordLink *linkedList(char *word) {
-	struct wordLink *list = (struct wordLink *)malloc(sizeof(struct wordLink));
+struct linked_list_t *linked_list(char *word) {
+	struct linked_list_t *list =
+			(struct linked_list_t *)malloc(sizeof(struct linked_list_t));
 	list->word = (char *)malloc(sizeof(char) * strlen(word));
 	strncpy(list->word, word, strlen(word));
 	list->word[strlen(word) - 1] = '\0';
@@ -29,22 +31,21 @@ struct wordLink *linkedList(char *word) {
 	return list;
 }
 
-// post: free memory of specified Node
-void freeEverything(Node *root) {
+void free_all(node_t *root) {
 	for (int i = 0; i < 8; i++) {
-		if (root->numberKey[i]) {
-			freeEverything(root->numberKey[i]);
+		if (root->number_key[i]) {
+			free_all(root->number_key[i]);
 		}
 	}
 	if (root->front) {
-		freeLink(root->front);
+		free_linked_list(root->front);
 	}
 	free(root);
 }
 
-void freeLink(LinkedList *front) {
+void free_linked_list(linked_list_t *front) {
 	if (front->next) {
-		freeLink(front->next);
+		free_linked_list(front->next);
 	}
 	free(front->word);
 	free(front);
