@@ -17,4 +17,5 @@ typedef struct linked_list_t {
 
 void free_all(node_t *root);
 void free_linked_list(linked_list_t *front);
-#endif
+
+#endif // NODE_H
