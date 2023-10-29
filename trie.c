@@ -1,18 +1,20 @@
+#include <stdio.h>
 #include <string.h>
 
+#include "llist.h"
 #include "node.h"
 #include "trie.h"
 
 static int get_key(char letter);
 
 void trie_add_word(node_t *head, char *word) {
-	linked_list_t *temp;
+	llist_t *temp;
 	for (int i = 0; i < strlen(word) - 1; i++) {
 		int key = get_key(word[i]);
 		if (head->number_key[key] != NULL) {
 			head = head->number_key[key];
 		} else {
-			head->number_key[key] = new_node();
+			head->number_key[key] = node_new();
 			head = head->number_key[key];
 		}
 
@@ -21,19 +23,21 @@ void trie_add_word(node_t *head, char *word) {
 		}
 
 		if (head->front == NULL) {
-			head->front = linked_list(word);
+			head->front = llist_new();
+			llist_init(head->front, word);
 		} else {
 			temp = head->front;
 			while (temp->next != NULL)
 				temp = temp->next;
 
-			temp->next = linked_list(word);
+			temp->next = llist_new();
+			llist_init(temp->next, word);
 		}
 	}
 }
 
 void trie_get_word(char *input, node_t *current, char *ret) {
-	linked_list_t *listPointer = NULL;
+	llist_t *listPointer = NULL;
 	int pound = 0;
 	int done = 0;
 

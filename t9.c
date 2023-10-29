@@ -17,7 +17,7 @@ void search(node_t *root);
 int main(int argc, char **argv) {
 	FILE *dict = fopen(argv[1], "r");
 	char word[MAX_LINE];
-	node_t *root = new_node();
+	node_t *root = node_new();
 	node_t *temp;
 	if (dict == NULL) {
 		fprintf(stderr, "File does not exist\n");
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	}
 	fclose(dict);
 	search(root);
-	free_all(root);
+	node_free_all(root);
 	return 0;
 }
 
