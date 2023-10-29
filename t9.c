@@ -12,28 +12,37 @@
 
 #define MAX_LINE 100
 
-void search(node_t *root);
+void search(trie_t *trie);
+
+void inject_file_into_trie(trie_t *trie, char *filename);
 
 int main(int argc, char **argv) {
-	FILE *dict = fopen(argv[1], "r");
-	char word[MAX_LINE];
-	node_t *root = node_new();
-	node_t *temp;
-	if (dict == NULL) {
-		fprintf(stderr, "File does not exist\n");
-		return 1;
-	}
-	while (fgets(word, MAX_LINE, dict) != NULL) {
-		temp = root;
-		trie_add_word(temp, word);
-	}
-	fclose(dict);
-	search(root);
-	node_free_all(root);
+
+	trie_t trie;
+	trie_init(&trie);
+	inject_file_into_trie(&trie, argv[1]);
+	search(&trie);
+	trie_deinit(&trie);
 	return 0;
 }
 
-void search(node_t *root) {
+void inject_file_into_trie(trie_t *trie, char *filename) {
+	FILE *dict = fopen(filename, "r");
+	if (dict == NULL) {
+		fprintf(stderr, "File does not exist\n");
+		// TODO: add error
+		return;
+	}
+
+	char word[MAX_LINE];
+	while (fgets(word, MAX_LINE, dict) != NULL) {
+		trie_add_word(trie, word);
+	}
+
+	fclose(dict);
+}
+
+void search(trie_t *trie) {
 	cbreak();
 	echo();
 	initscr();
@@ -48,7 +57,7 @@ void search(node_t *root) {
 		if (x == EOF) {
 			pos = 0;
 		} else {
-			trie_get_word(input, root, ret);
+			trie_get_word(trie, input, ret);
 			pos++;
 		}
 		refresh();

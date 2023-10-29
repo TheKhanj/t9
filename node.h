@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <stdlib.h>
+
 #include "llist.h"
 
 typedef struct node_t {
@@ -9,7 +11,7 @@ typedef struct node_t {
 } node_t;
 
 node_t *node_new();
-void node_free_all(node_t *root);
 void node_init(node_t *node);
+void node_iterate(node_t *node, node_t **nodes, size_t size);
 
 #endif // NODE_H

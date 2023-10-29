@@ -1,3 +1,5 @@
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -7,15 +9,45 @@
 
 static int get_key(char letter);
 
-void trie_add_word(node_t *head, char *word) {
+void trie_init(trie_t *trie) {
+	node_init(&trie->root);
+	trie->size = 1;
+}
+
+void trie_deinit(trie_t *trie) {
+	// TODO: fix this, size is not correct
+	node_t *nodes[trie->size];
+	node_iterate(&trie->root, nodes, 0);
+
+	for (size_t i = 0; i < trie->size; i++) {
+		node_t *node = nodes[i];
+		if (node->front) {
+			llist_free(node->front);
+		}
+
+		bool is_root = i == 0;
+
+		if (!is_root) {
+			free(node);
+		}
+	}
+}
+
+void trie_add_word(trie_t *trie, char *word) {
 	llist_t *temp;
+	node_t *head = &trie->root;
+
 	for (int i = 0; i < strlen(word) - 1; i++) {
 		int key = get_key(word[i]);
 		if (head->number_key[key] != NULL) {
 			head = head->number_key[key];
 		} else {
-			head->number_key[key] = node_new();
-			head = head->number_key[key];
+			node_t *node = node_new();
+			node_init(node);
+
+			head->number_key[key] = node;
+			trie->size++;
+			head = node;
 		}
 
 		if (i != strlen(word) - 2) {
@@ -36,10 +68,11 @@ void trie_add_word(node_t *head, char *word) {
 	}
 }
 
-void trie_get_word(char *input, node_t *current, char *ret) {
+void trie_get_word(trie_t *trie, char *input, char *ret) {
 	llist_t *listPointer = NULL;
 	int pound = 0;
 	int done = 0;
+	node_t *current = &trie->root;
 
 	if (input[0] == 'n') {
 		done = 1;
