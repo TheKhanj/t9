@@ -15,7 +15,6 @@ void trie_init(trie_t *trie) {
 }
 
 void trie_deinit(trie_t *trie) {
-	// TODO: fix this, size is not correct
 	node_t *nodes[trie->size];
 	node_iterate(&trie->root, nodes, 0);
 
@@ -68,7 +67,7 @@ void trie_add_word(trie_t *trie, char *word) {
 	}
 }
 
-void trie_get_word(trie_t *trie, char *input, char *ret) {
+void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 	llist_t *listPointer = NULL;
 	int pound = 0;
 	int done = 0;
@@ -80,7 +79,7 @@ void trie_get_word(trie_t *trie, char *input, char *ret) {
 			listPointer = listPointer->next;
 			strcpy(ret, listPointer->word);
 		} else {
-			printf("There are no more T9onyms\n");
+			err->message = "there are no more synonyms";
 			return;
 		}
 	} else {
@@ -119,13 +118,14 @@ void trie_get_word(trie_t *trie, char *input, char *ret) {
 					pound++;
 					break;
 				default:
-					printf("Invalid input: can only accept Integer (2 to 9)  or #\n");
+					// TODO: fix this message
+					err->message = "invalid input: can only accept Integer (2 to 9) or #";
 					return;
 				}
 			} else {
 				if (done == 0) {
 					done = 1;
-					printf("Not found in current dictionary.\n");
+					err->message = "not found in current dictionary.";
 				}
 			}
 		}
@@ -143,12 +143,12 @@ void trie_get_word(trie_t *trie, char *input, char *ret) {
 		} else {
 			if (done == 0) {
 				done = 1;
-				printf("Not found in current dictionary.\n");
+				err->message = "not found in current dictionary.";
 			}
 		}
 	} else {
 		if (done == 0) {
-			printf("Not found in current dictionary.\n");
+			err->message = "not found in current dictionary.";
 		}
 	}
 }

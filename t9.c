@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "error.h"
 #include "node.h"
 #include "trie.h"
 
@@ -14,23 +15,30 @@
 
 void search(trie_t *trie);
 
-void inject_file_into_trie(trie_t *trie, char *filename);
+void inject_file_into_trie(trie_t *trie, char *filename, error_t *err);
 
 int main(int argc, char **argv) {
+	error_t err;
+	error_init(&err);
 
 	trie_t trie;
+
 	trie_init(&trie);
-	inject_file_into_trie(&trie, argv[1]);
+	inject_file_into_trie(&trie, argv[1], &err);
+
+	if (error_exist(&err)) {
+		error_print(&err);
+	}
+
 	search(&trie);
 	trie_deinit(&trie);
 	return 0;
 }
 
-void inject_file_into_trie(trie_t *trie, char *filename) {
+void inject_file_into_trie(trie_t *trie, char *filename, error_t *err) {
 	FILE *dict = fopen(filename, "r");
 	if (dict == NULL) {
-		fprintf(stderr, "File does not exist\n");
-		// TODO: add error
+		err->message = "file does not exist";
 		return;
 	}
 
@@ -49,6 +57,9 @@ void search(trie_t *trie) {
 	char input[MAX_LINE], ret[MAX_LINE];
 	int pos = 0;
 
+	error_t err;
+	error_init(&err);
+
 	while (true) {
 		char x = getch();
 		input[pos] = x;
@@ -57,7 +68,10 @@ void search(trie_t *trie) {
 		if (x == EOF) {
 			pos = 0;
 		} else {
-			trie_get_word(trie, input, ret);
+			trie_get_word(trie, input, ret, &err);
+			if (error_exist(&err)) {
+				error_panic(&err);
+			}
 			pos++;
 		}
 		refresh();
