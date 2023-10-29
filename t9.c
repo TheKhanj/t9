@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <curses.h>
-#include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,29 +50,22 @@ void inject_file_into_trie(trie_t *trie, char *filename, error_t *err) {
 }
 
 void search(trie_t *trie) {
-	cbreak();
-	echo();
-	initscr();
 	char input[MAX_LINE], ret[MAX_LINE];
-	int pos = 0;
 
 	error_t err;
 	error_init(&err);
 
 	while (true) {
-		char x = getch();
-		input[pos] = x;
-		input[pos + 1] = 0;
+		scanf("%s", input);
 
-		if (x == EOF) {
-			pos = 0;
-		} else {
-			trie_get_word(trie, input, ret, &err);
-			if (error_exist(&err)) {
-				error_panic(&err);
-			}
-			pos++;
+		trie_get_word(trie, input, ret, &err);
+
+		if (error_exist(&err)) {
+			error_print(&err);
+			error_init(&err);
+			continue;
 		}
-		refresh();
+
+		printf("%s\n", ret);
 	}
 }
