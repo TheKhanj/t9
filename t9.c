@@ -41,11 +41,11 @@ void inject_file_into_trie(trie_t *trie, char *filename, error_t *err) {
 		return;
 	}
 
-	char line[MAX_LINE], word[MAX_LINE];
-	while (fgets(line, MAX_LINE, dict) != NULL) {
-		sprintf(word, "%s", line);
+	char word[MAX_LINE];
+	while (fgets(word, MAX_LINE, dict) != NULL) {
+		word[strlen(word) - 1] = '\0';
 
-		if(strlen(word) ==0) {
+		if (strlen(word) == 0) {
 			continue;
 		}
 

@@ -6,7 +6,7 @@
 #include "llist.h"
 
 typedef struct node_t {
-	struct node_t *number_key[8];
+	struct node_t *number_key[9];
 	struct llist_t *words;
 } node_t;
 

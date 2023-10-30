@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -49,11 +50,11 @@ static node_t *fetch_next_node(trie_t *trie, node_t *node, size_t key) {
 void trie_add_word(trie_t *trie, char *word) {
 	node_t *node = &trie->root;
 
-	for (int i = 0; i < strlen(word) - 1; i++) {
+	for (int i = 0; i < strlen(word); i++) {
 		int key = get_key(word[i]);
 		node = fetch_next_node(trie, node, key);
 
-		bool is_leaf = i == (strlen(word) - 2);
+		bool is_leaf = i == (strlen(word) - 1);
 
 		if (!is_leaf) {
 			continue;
@@ -64,7 +65,7 @@ void trie_add_word(trie_t *trie, char *word) {
 }
 
 int map_pressed_key_number(char c) {
-	char map[] = "iojklm,.";
+	char map[] = "uiojklm,.";
 	size_t size = sizeof(map) / sizeof(map[0]);
 	for (size_t i = 0; i < size; i++) {
 		if (map[i] == c) {
@@ -144,7 +145,8 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 }
 
 static int get_key(char letter) {
-	char *map[] = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+	char *map[] = {".,-?!'@:/;1\0", "abc2\0",	 "def3\0", "ghi4\0", "jkl5\0",
+								 "mno6\0",				"pqrs7\0", "tuv8\0", "wxyz9\0"};
 
 	size_t size = sizeof(map) / sizeof(map[0]);
 
@@ -152,7 +154,7 @@ static int get_key(char letter) {
 		char *key = map[i];
 		for (size_t j = 0; j < strlen(key); j++) {
 			char c = key[j];
-			if (c == letter) {
+			if (c == letter || toupper(c) == letter) {
 				return i;
 			}
 		}
