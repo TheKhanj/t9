@@ -1,7 +1,7 @@
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "error.h"
@@ -63,6 +63,18 @@ void trie_add_word(trie_t *trie, char *word) {
 	}
 }
 
+int map_pressed_key_number(char c) {
+	char map[] = "iojklm,.";
+	size_t size = sizeof(map) / sizeof(map[0]);
+	for (size_t i = 0; i < size; i++) {
+		if (map[i] == c) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 	llist_t *list_pointer = NULL;
 	int pound = 0;
@@ -82,31 +94,13 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 		list_pointer = current->words;
 		for (int i = 0; i < strlen(input) - 1; i++) {
 			if (current != NULL) {
-				switch (input[i]) {
-				case 'i':
-					current = current->number_key[0];
-					break;
-				case 'o':
-					current = current->number_key[1];
-					break;
-				case 'j':
-					current = current->number_key[2];
-					break;
-				case 'k':
-					current = current->number_key[3];
-					break;
-				case 'l':
-					current = current->number_key[4];
-					break;
-				case 'm':
-					current = current->number_key[5];
-					break;
-				case ',':
-					current = current->number_key[6];
-					break;
-				case '.':
-					current = current->number_key[7];
-					break;
+				char c = input[i];
+				int next_id = map_pressed_key_number(c);
+				if (next_id != -1) {
+					current = current->number_key[next_id];
+					continue;
+				}
+				switch (c) {
 				case ' ':
 					if (pound == 0) {
 						list_pointer = current->words;
@@ -116,7 +110,7 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 				default:
 					// TODO: fix this message
 					err->message = "invalid input: can only accept Integer (2 to 9) or #";
-					return;
+					break;
 				}
 			} else {
 				if (done == 0) {
