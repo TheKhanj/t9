@@ -162,7 +162,7 @@ static int get_key(char letter) {
 	error_init(&err);
 
 	err.message = malloc(sizeof(char) * 100);
-	sprintf(err.message, "invalid character code in dictionary file (%d)",
+	sprintf(err.message, "invalid character code in dictionary file (%d).",
 					letter);
 
 	error_panic(&err);

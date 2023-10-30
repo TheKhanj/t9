@@ -37,12 +37,18 @@ int main(int argc, char **argv) {
 void inject_file_into_trie(trie_t *trie, char *filename, error_t *err) {
 	FILE *dict = fopen(filename, "r");
 	if (dict == NULL) {
-		err->message = "file does not exist";
+		err->message = "file does not exist.";
 		return;
 	}
 
-	char word[MAX_LINE];
-	while (fgets(word, MAX_LINE, dict) != NULL) {
+	char line[MAX_LINE], word[MAX_LINE];
+	while (fgets(line, MAX_LINE, dict) != NULL) {
+		sprintf(word, "%s", line);
+
+		if(strlen(word) ==0) {
+			continue;
+		}
+
 		trie_add_word(trie, word);
 	}
 

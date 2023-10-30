@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -8,12 +10,21 @@ llist_t *llist_new() {
 	return list;
 }
 
+static void copy_word(llist_t *list, char *word) {
+	// otherwise will get into memory leak
+	assert(list->word == NULL);
+
+	size_t size = strlen(word) + 1;
+
+	list->word = malloc(sizeof(char) * size);
+	strncpy(list->word, word, size);
+}
+
 void llist_init(llist_t *list, char *word) {
 	if (word != NULL) {
-		list->word = (char *)malloc(sizeof(char) * strlen(word));
-		strncpy(list->word, word, strlen(word));
-		list->word[strlen(word) - 1] = '\0';
+		copy_word(list, word);
 	}
+
 	list->next = NULL;
 }
 
