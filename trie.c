@@ -92,7 +92,7 @@ void trie_get_word(trie_t *trie, char *input, char *ret, error_t *err) {
 		}
 	} else {
 		list_pointer = current->words;
-		for (int i = 0; i < strlen(input) - 1; i++) {
+		for (int i = 0; i < strlen(input); i++) {
 			if (current != NULL) {
 				char c = input[i];
 				int next_id = map_pressed_key_number(c);
